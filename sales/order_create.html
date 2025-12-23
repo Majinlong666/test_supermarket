@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block title %}创建销售单 - 超市管理系统{% endblock %}
+
+{% block content %}
+<div class="card mt-3">
+    <div class="card-header bg-primary text-white">
+        <h5>创建销售单</h5>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            
+            <!-- 商品选择区域 -->
+            <div id="product-items">
+                <div class="row mb-3 align-items-end">
+                    <div class="col-md-5">
+                        <label class="form-label">商品333</label>
+                        <select name="product_id" class="form-select">
+                            <option value="">选择商品22</option>
+                            {% for product in product_list %}
+                            <option value="{{ product.id }}" data-price="{{ product.sell_price }}">
+                                {{ product.product_name }} (¥{{ product.sell_price }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">数量111</label>
+                        <input type="number" name="quantity" class="form-control" min="1" value="1">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-primary add-item">添加</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 已选商品列表 -->
+            <div class="mb-3">
+                <h6>已选商品</h6>
+                <div id="selected-items" class="border p-3 mb-3">
+                    <div class="text-muted">暂无商品，请添加</div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">提交销售单</button>
+            <a href="{% url 'sales:order_list' %}" class="btn btn-secondary">取消</a>
+        </form>
+    </div>
+</div>
+
+<!-- 简单JS实现商品添加 -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const addBtn = document.querySelector('.add-item');
+    const productItems = document.getElementById('product-items');
+    const selectedItems = document.getElementById('selected-items');
+    
+    addBtn.addEventListener('click', function() {
+        // 复制当前商品选择行
+        const newRow = productItems.firstElementChild.cloneNode(true);
+        newRow.querySelector('button').remove(); // 移除添加按钮
+        productItems.appendChild(newRow);
+        
+        // 更新已选商品显示
+        const select = newRow.querySelector('select');
+        const quantity = newRow.querySelector('input');
+        const productName = select.options[select.selectedIndex].text;
+        const price = select.options[select.selectedIndex].dataset.price;
+        const subtotal = (price * quantity.value).toFixed(2);
+        
+        if (selectedItems.querySelector('.text-muted')) {
+            selectedItems.innerHTML = '';
+        }
+        
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'mb-2';
+        itemDiv.innerHTML = `${productName} × ${quantity.value} = ¥${subtotal}`;
+        selectedItems.appendChild(itemDiv);
+    });
+});
+</script>
+{% endblock %}
