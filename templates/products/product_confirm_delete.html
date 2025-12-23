@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block title %}删除商品 - 超市管理系统{% endblock %}
+
+{% block content %}
+<div class="card mt-3 col-md-6 mx-auto">
+    <div class="card-header bg-danger text-white">
+        <h5>确认删除</h5>
+    </div>
+    <div class="card-body">
+        <p class="fs-5">确定要删除商品【{{ product.product_name }}】吗？</p>
+        <p class="text-danger">该操作不可撤销！</p>
+        
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">确认删除</button>
+            <a href="{% url 'products:product_list' %}" class="btn btn-secondary">取消</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

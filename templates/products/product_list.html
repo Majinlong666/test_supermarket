@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block title %}商品列表 - 超市管理系统{% endblock %}
+
+{% block content %}
+<div class="card mt-3">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h5>商品列表</h5>
+        <div class="d-flex">
+            <form method="get" action="{% url 'products:product_search' %}" class="me-2">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control form-control-sm" placeholder="搜索商品..." value="{{ request.GET.q }}">
+                    <button type="submit" class="btn btn-light btn-sm">搜索</button>
+                </div>
+            </form>
+            <a href="{% url 'products:product_add' %}" class="btn btn-light btn-sm">添加新商品</a>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if product_list %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">商品编码</th>
+                        <th style="width: 20%;">商品名称</th>
+                        <th style="width: 15%;">分类</th>
+                        <th style="width: 15%;">供应商</th>
+                        <th style="width: 10%;">采购价</th>
+                        <th style="width: 10%;">销售价</th>
+                        <th style="width: 10%;">库存</th>
+                        <th style="width: 10%;">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in product_list %}
+                    <tr>
+                        <td>{{ product.product_code }}</td>
+                        <td>{{ product.product_name }}</td>
+                        <td>{{ product.category|default:"无" }}</td>
+                        <td>{{ product.supplier.supplier_name }}</td>
+                        <td>¥{{ product.purchase_price }}</td>
+                        <td>¥{{ product.sell_price }}</td>
+                        <td>
+                            {% if product.stock_quantity < product.warning_quantity %}
+                            <span class="badge bg-danger">{{ product.stock_quantity }}</span>
+                            {% else %}
+                            {{ product.stock_quantity }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'products:product_edit' product.id %}" class="btn btn-sm btn-warning me-1">编辑</a>
+                            <a href="{% url 'products:product_delete' product.id %}" class="btn btn-sm btn-danger">删除</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">暂无商品记录，请先添加商品</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

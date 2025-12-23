@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}首页 - 超市管理系统{% endblock %}
+
+{% block content %}
+<div class="card mt-3">
+    <div class="card-header bg-primary text-white">
+        <h4>系统概览</h4>
+    </div>
+    <div class="card-body">
+        <h5>欢迎使用超市管理系统！</h5>
+        <!-- 修复：用Django模板的if/else标签替代Python三元表达式 -->
+        <p>当前角色：
+            {% if user.is_superuser %}
+                管理员
+            {% else %}
+                普通用户
+            {% endif %}
+        </p>
+    </div>
+</div>
+{% endblock %}
